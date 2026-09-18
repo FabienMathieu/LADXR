@@ -11,6 +11,8 @@ The only requirements are: to use python3, and the English v1.0 ROM for Links Aw
 
 The proper SHA-1 for the rom is `d90ac17e9bf17b6c61624ad9f05447bdb5efc01a`.
 
+The French (France) Rev 1 ROM is also supported (SHA-1 `b5e4df1a67432c609fa0f23519315297c6dcdc1d`); it is detected automatically. Use `--romprofile auto|en|fr` to force a profile.
+
 Basic usage:
 `python3 main.py zelda.gbc`
 
@@ -27,3 +29,12 @@ This is still in the early stage of development. Important bits are:
 * `logic/*.py`: Contains the logic definitions of what connects to what in the world and what it requires to access that part.
 * `locations/*.py`: Contains definitions of location types, and what items can be there. As well as the code on how to place an item there. For example the Chest class has a list of all items that can be in a chest. And the needed rom patch to put that an item in a specific chest.
 * `patches/*.py`: Various patches on the code that are not directly related to a specific location. But more general fixes
+
+Run the test suite (ROM-dependent tests are skipped if the ROMs are absent):
+
+`tools/run_tests.sh`
+
+See [`docs/rom-support.md`](docs/rom-support.md) for the multi-ROM (English /
+French) architecture, the `rommap_fr.json` format and a guide to adding a new
+ROM version or language. The relocation tooling is documented in
+[`tools/README.md`](tools/README.md).

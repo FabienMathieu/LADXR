@@ -4,6 +4,7 @@ import importlib.machinery
 import os
 
 from romTables import ROMWithTables
+import romprofile
 import assembler
 import utils
 import mapgen
@@ -62,7 +63,9 @@ import locations.keyLocation
 # Function to generate a final rom, this patches the rom with all required patches
 def generateRom(args, settings, seed, logic, *, rnd=None):
     print("Loading: %s" % (args.input_filename))
-    rom = ROMWithTables(open(args.input_filename, 'rb'))
+    profile = romprofile.profile_by_name(getattr(args, "romprofile", None))
+    rom = ROMWithTables(open(args.input_filename, 'rb'), profile=profile)
+    utils.setLanguage(rom.profile.language)
 
     pymods = []
     if args.pymod:
@@ -172,7 +175,11 @@ def generateRom(args, settings, seed, logic, *, rnd=None):
     patches.bomb.onlyDropBombsWhenHaveBombs(rom)
     patches.colorBook.fixColorBook(rom)
     patches.aesthetics.noSwordMusic(rom)
-    patches.aesthetics.reduceMessageLengths(rom, rnd)
+    if rom.profile.is_identity:
+        # English: shorten and rewrite the common messages. For other languages
+        # the original (already localized) ROM text is kept to avoid replacing
+        # it with English.
+        patches.aesthetics.reduceMessageLengths(rom, rnd)
     patches.aesthetics.allowColorDungeonSpritesEverywhere(rom)
     if settings.overworld == "alttp" or settings.overworld == "random":
         # Only apply this to ALTTP/random right now, as it might cause issues otherwise.

@@ -4,6 +4,7 @@ enabled = True
 [build-test]
 directory = _test
 commands =
+    python3 ../tools/run_tests.sh
     python3 ../main.py ../input.gbc --timeout 120 --output /dev/null
     python3 ../main.py ../input.gbc --timeout 120 -s seashells=0 -s heartpiece=0 -s dungeon_keys=keysanity -s nightmare_keys=keysanity -s dungeon_beaks=keysanity  -s dungeon_maps=keysanity --output /dev/null
     python3 ../main.py ../input.gbc --timeout 120 -s logic=glitched -s dungeon_keys=keysanity -s nightmare_keys=keysanity -s dungeon_beaks=keysanity  -s dungeon_maps=keysanity -s heartpiece=0 -s seashells=0 -s heartcontainers=0 -s instruments=1 -s owlstatues=both -s dungeonshuffle=1 -s witch=0 -s boomerang=gift -s steal=never -s goal=instruments -s goalcount=random --output /dev/null

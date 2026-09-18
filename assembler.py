@@ -5,6 +5,8 @@ import utils
 import re
 import os
 
+from codebytes import Code
+
 
 REGS8 = {"A": 7, "B": 0, "C": 1, "D": 2, "E": 3, "H": 4, "L": 5, "[HL]": 6}
 REGS16A = {"BC": 0, "DE": 1, "HL": 2, "SP": 3}
@@ -1070,13 +1072,16 @@ def const(name: str, value: int) -> None:
     CONST_MAP[name] = value
 
 
-def resetConsts() -> None:
+def resetConsts(overrides: Optional[Dict[str, int]] = None) -> None:
     CONST_MAP.clear()
     for line in open(os.path.join(os.path.dirname(__file__), "assembler.const"), "rt"):
         if ":" in line:
             value, _, key = line.strip().partition(":")
             key = key.split(";")[0].strip()
             CONST_MAP[key] = int(value, 16)
+    if overrides:
+        for key, value in overrides.items():
+            CONST_MAP[key.upper()] = value
 
 
 def ASM(code: str, base_address: Optional[int] = None, labels_result: Optional[Dict[str, int]] = None) -> bytes:
@@ -1088,8 +1093,8 @@ def ASM(code: str, base_address: Optional[int] = None, labels_result: Optional[D
         for label, offset, bank in asm.getLabels():
             labels_result[label] = offset
     for section in asm.getSections():
-        return binascii.hexlify(section.data)
-    return b''
+        return Code(binascii.hexlify(section.data))
+    return Code(b'')
 
 
 def allOpcodesTest() -> None:

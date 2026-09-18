@@ -2,9 +2,33 @@ from typing import Optional
 
 from locations.items import *
 import random
+import french
 
 class Error(Exception):
     pass
+
+
+# Active language: "en" (default) or "fr". Set from the ROM profile.
+_LANGUAGE = "en"
+_NAMES_FR_ACTIVE: Optional[dict] = None
+
+
+def setLanguage(language: str) -> None:
+    global _LANGUAGE, _NAMES_FR_ACTIVE
+    _LANGUAGE = language
+    if language == "fr" and _NAMES_FR_ACTIVE is None:
+        _NAMES_FR_ACTIVE = dict(_NAMES)
+        _NAMES_FR_ACTIVE.update(french.NAMES)
+
+
+def getLanguage() -> str:
+    return _LANGUAGE
+
+
+def _names() -> dict:
+    if _LANGUAGE == "fr" and _NAMES_FR_ACTIVE is not None:
+        return _NAMES_FR_ACTIVE
+    return _NAMES
 
 
 _NAMES = {
@@ -219,14 +243,25 @@ def randomNumber(min: int, max: int, rnd: random.Random) -> str:
 	return str(random.randrange(min, max))
 
 def setReplacementName(key: str, value: str) -> None:
-    _NAMES[key] = value
+    _names()[key] = value
 
 
 def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None) -> bytes:
-    instr = instr.format(**_NAMES)
-    s = instr.encode("ascii")
-    for character, encodedCharacter in _CHARACTERS.items():
-        s = s.replace(character, encodedCharacter)
+    use_french = _LANGUAGE == "fr"
+    if use_french:
+        instr = french.translate(instr)
+        instr = instr.format(**_names())
+        # In French source strings `_` is used as a space, while the character
+        # ç is encoded to `_` by french.encode(); resolve spaces before encoding.
+        instr = instr.replace("_", " ")
+        s = french.encode(instr)
+        askbytes = french.encode(french.translate(ask).replace("_", " ")) if ask is not None else None
+    else:
+        instr = instr.format(**_names())
+        s = instr.encode("ascii")
+        for character, encodedCharacter in _CHARACTERS.items():
+            s = s.replace(character, encodedCharacter)
+        askbytes = ask.encode("ascii") if ask is not None else None
 
     def padLine(line: bytes) -> bytes:
         return line + b' ' * (16 - len(line))
@@ -248,11 +283,12 @@ def formatText(instr: str, *, center: bool = False, ask: Optional[str] = None) -
         if result_line:
             result += padLine(result_line)
     if ask is not None:
-        askbytes = ask.encode("ascii")
         result = result.rstrip()
         while len(result) % 16 != 0:
             result += b' '
         return result + b'    ' + askbytes + b'\xfe'
+    if use_french:
+        return result.rstrip() + b'\xff'
     return result.replace(b'_', b' ').rstrip() + b'\xff'
 
 

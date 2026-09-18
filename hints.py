@@ -1,5 +1,7 @@
 from locations.items import *
 from utils import formatText
+import utils
+import french
 
 
 hint_text_ids = [
@@ -37,6 +39,15 @@ hints = [
     "They say that {0} is at {1}",
     "You might want to look in {1} for a secret",
 ]
+
+hints_fr = [
+    "{0} se trouve à {1}",
+    "Pour {0}, cherche à {1}",
+    "{1} renferme {0}",
+    "On dit que {0} est à {1}",
+    "Cherche un secret à {1}",
+]
+
 useless_hint = [
     ("Egg", "Mt. Tamaranch"),
     ("Marin", "Mabe Village"),
@@ -48,8 +59,22 @@ useless_hint = [
     ("Sand", "Yarna Desert"),
 ]
 
+useless_hint_fr = [
+    ("l'Oeuf", "Mont Tamaranch"),
+    ("Marin", "Village de Mabe"),
+    ("Marin", "Village de Mabe"),
+    ("la Sorcière", "Prairie de Koholint"),
+    ("la Sirène", "Baie de Martha"),
+    ("rien", "Terres Désolées de Tabahl"),
+    ("les Animaux", "Village des Animaux"),
+    ("le Sable", "Désert de Yarna"),
+]
+
 
 def addHints(rom, rnd, spots):
+    lang = utils.getLanguage()
+    active_hints = hints_fr if lang == "fr" else hints
+    active_useless = useless_hint_fr if lang == "fr" else useless_hint
     spots = list(sorted(filter(lambda spot: spot.item in hint_items, spots), key=lambda spot: spot.nameId))
     text_ids = hint_text_ids.copy()
     rnd.shuffle(text_ids)
@@ -57,9 +82,10 @@ def addHints(rom, rnd, spots):
         if len(spots) > 0:
             spot_index = rnd.randint(0, len(spots) - 1)
             spot = spots.pop(spot_index)
-            hint = rnd.choice(hints).format("{%s}" % (spot.item), spot.metadata.area)
+            area = french.areaName(spot.metadata.area) if lang == "fr" else spot.metadata.area
+            hint = rnd.choice(active_hints).format("{%s}" % (spot.item), area)
         else:
-            hint = rnd.choice(hints).format(*rnd.choice(useless_hint))
+            hint = rnd.choice(active_hints).format(*rnd.choice(active_useless))
         rom.texts[text_id] = formatText(hint)
 
     for text_id in range(0x200, 0x20C, 2):

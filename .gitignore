@@ -142,3 +142,6 @@ cython_debug/
 .vscode
 LADXR_*.txt
 LADXR_*.json
+
+# French relocation tooling: intermediate artifacts (signatures, ROM-derived data)
+tools/data/

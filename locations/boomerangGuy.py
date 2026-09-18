@@ -2,6 +2,7 @@ from .itemInfo import ItemInfo
 from .constants import *
 from assembler import ASM
 from utils import formatText
+import utils
 
 
 class BoomerangGuy(ItemInfo):
@@ -41,8 +42,12 @@ class BoomerangGuy(ItemInfo):
             rom.patch(0x19, 0x0710, ASM("ld a, $0D"), ASM("ld a, $%s" % (inv)))
 
             rom.texts[0x222] = formatText("Okay, let's do it!")
-            rom.texts[0x224] = formatText("You got the {%s} in exchange for the item you had." % (option))
-            rom.texts[0x225] = formatText("Give me back my {%s}, I beg you! I'll return the item you gave me" % (option), ask="Okay Not Now")
+            if utils.getLanguage() == "fr":
+                rom.texts[0x224] = formatText("Tu obtiens le {%s} en échange de l'objet que tu avais." % (option))
+                rom.texts[0x225] = formatText("Rends-moi mon {%s}, je t'en prie! Je te rendrai l'objet que tu m'as donné" % (option), ask="Okay Not Now")
+            else:
+                rom.texts[0x224] = formatText("You got the {%s} in exchange for the item you had." % (option))
+                rom.texts[0x225] = formatText("Give me back my {%s}, I beg you! I'll return the item you gave me" % (option), ask="Okay Not Now")
             rom.texts[0x226] = formatText("The item came back to you. You returned the other item.")
         else:
             # Patch the inventory trade to give an specific item instead

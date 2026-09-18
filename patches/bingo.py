@@ -3,6 +3,7 @@ from roomEditor import RoomEditor, ObjectWarp
 from assembler import ASM
 from locations.constants import *
 from utils import formatText
+import utils
 
 REQUIRED_ROWS = {"bingo": 1, "bingo-double": 2, "bingo-triple": 3, "bingo-full": 12}
 
@@ -1176,7 +1177,23 @@ done:   ; Return to normal item drop handler
     re.entities = []
     re.store(rom)
 
-    rom.texts[0xCF] = formatText("""
+    if utils.getLanguage() == "fr":
+        rom.texts[0xCF] = formatText("""
+        Bingo!
+        Jeune homme, je veux dire... #####, le héros!
+        Tu as fait un bingo!
+        Tu as prouvé ta sagesse, ton courage et ta force!
+        ... ... ... ...
+        En tant qu'esprit du Poisson-Rêve, je garde son monde de rêve...
+        Mais un jour, nous avons décidé de jouer au bingo.
+        Puis toi, #####, tu es venu gagner le bingo...
+        Merci, #####...
+        Mon travail est terminé...
+        Le Poisson-Rêve va bientôt se réveiller.
+        Au revoir... Bingo!
+    """)
+    else:
+        rom.texts[0xCF] = formatText("""
         Bingo!
         Young lad, I mean... #####, the hero!
         You have bingo!

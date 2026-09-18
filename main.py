@@ -1,5 +1,6 @@
 import binascii
 from romTables import ROMWithTables
+import romprofile
 import json
 import randomizer
 import logic.main
@@ -53,6 +54,8 @@ def main(mainargs: Optional[List[str]] = None) -> None:
         help="Warning, bugged in various ways")
     parser.add_argument('--pymod', dest="pymod", action='append',
         help="Load python code mods.")
+    parser.add_argument('--romprofile', dest="romprofile", choices=["auto", "en", "fr"], default="auto",
+        help="Force the ROM profile instead of detecting it from the ROM (auto/en/fr).")
 
     settings = Settings()
     args = parser.parse_args(mainargs)
@@ -83,7 +86,10 @@ def main(mainargs: Optional[List[str]] = None) -> None:
     if args.exportmap:
         import mapexport
         print(f"Loading: {args.input_filename}")
-        rom = ROMWithTables(open(args.input_filename, 'rb'))
+        rom = ROMWithTables(open(args.input_filename, 'rb'), profile=romprofile.profile_by_name(args.romprofile))
+        if not rom.profile.is_identity:
+            print("--exportmap is not supported for the %s ROM yet: its room metadata tables are not relocated." % rom.profile.name)
+            sys.exit(1)
         kwargs = {}
         if isinstance(args.exportmap, str):
             for kv in args.exportmap.split(":"):
@@ -111,14 +117,14 @@ def main(mainargs: Optional[List[str]] = None) -> None:
 
     if args.gfxtemplate:
         import patches.aesthetics
-        rom = ROMWithTables(open(args.input_filename, 'rb'))
+        rom = ROMWithTables(open(args.input_filename, 'rb'), profile=romprofile.profile_by_name(args.romprofile))
         patches.aesthetics.createGfxImage(rom, args.gfxtemplate)
         print(f"Created {args.gfxtemplate}")
         sys.exit(0)
 
     if args.dump is not None or args.test:
         print("Loading: %s" % (args.input_filename))
-        rom = ROMWithTables(open(args.input_filename, 'rb'))
+        rom = ROMWithTables(open(args.input_filename, 'rb'), profile=romprofile.profile_by_name(args.romprofile))
 
         if args.spoilerformat == "none":
             args.spoilerformat = "console"

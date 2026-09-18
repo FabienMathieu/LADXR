@@ -1,3 +1,5 @@
+from typing import Any, Dict, Optional
+
 from rom import ROM
 from pointerTable import PointerTable
 from assembler import ASM
@@ -6,24 +8,29 @@ from assembler import ASM
 class Texts(PointerTable):
     END_OF_DATA = (0xfe, 0xff)
 
-    def __init__(self, rom):
-        super().__init__(rom, {
-            "count": 0x2B0,
-            "pointers_addr": 1,
-            "pointers_bank": 0x1C,
-            "banks_addr": 0x741,
-            "banks_bank": 0x1C,
-        })
+    DEFAULT_INFO: Dict[str, Any] = {
+        "count": 0x2B0,
+        "pointers_addr": 1,
+        "pointers_bank": 0x1C,
+        "banks_addr": 0x741,
+        "banks_bank": 0x1C,
+    }
+
+    def __init__(self, rom, info: Optional[Dict[str, Any]] = None):
+        super().__init__(rom, info or dict(self.DEFAULT_INFO))
 
 
 class Entities(PointerTable):
-    def __init__(self, rom):
-        super().__init__(rom, {
-            "count": 0x320,
-            "pointers_addr": 0,
-            "pointers_bank": 0x16,
-            "data_bank": 0x16,
-        })
+    DEFAULT_INFO: Dict[str, Any] = {
+        "count": 0x320,
+        "pointers_addr": 0,
+        "pointers_bank": 0x16,
+        "data_bank": 0x16,
+    }
+
+    def __init__(self, rom, info: Optional[Dict[str, Any]] = None):
+        super().__init__(rom, info or dict(self.DEFAULT_INFO))
+
 
 class RoomsTable(PointerTable):
     HEADER = 2
@@ -46,70 +53,80 @@ class RoomsTable(PointerTable):
 
 
 class RoomsOverworldTop(RoomsTable):
-    def __init__(self, rom):
-        super().__init__(rom, {
-            "count": 0x080,
-            "pointers_addr": 0x000,
-            "pointers_bank": 0x09,
-            "data_bank": 0x09,
-            "alt_pointers": {
-                "Alt06": (0x00, 0x31FD),
-                "Alt0E": (0x00, 0x31CD),
-                "Alt1B": (0x00, 0x320D),
-                "Alt2B": (0x00, 0x321D),
-                "Alt79": (0x00, 0x31ED),
-            }
-        })
+    DEFAULT_INFO: Dict[str, Any] = {
+        "count": 0x080,
+        "pointers_addr": 0x000,
+        "pointers_bank": 0x09,
+        "data_bank": 0x09,
+        "alt_pointers": {
+            "Alt06": (0x00, 0x31FD),
+            "Alt0E": (0x00, 0x31CD),
+            "Alt1B": (0x00, 0x320D),
+            "Alt2B": (0x00, 0x321D),
+            "Alt79": (0x00, 0x31ED),
+        }
+    }
+
+    def __init__(self, rom, info: Optional[Dict[str, Any]] = None):
+        super().__init__(rom, info or dict(self.DEFAULT_INFO))
 
 
 class RoomsOverworldBottom(RoomsTable):
-    def __init__(self, rom):
-        super().__init__(rom, {
-            "count": 0x080,
-            "pointers_addr": 0x100,
-            "pointers_bank": 0x09,
-            "data_bank": 0x1A,
-            "alt_pointers": {
-                "Alt8C": (0x00, 0x31DD),
-            }
-        })
+    DEFAULT_INFO: Dict[str, Any] = {
+        "count": 0x080,
+        "pointers_addr": 0x100,
+        "pointers_bank": 0x09,
+        "data_bank": 0x1A,
+        "alt_pointers": {
+            "Alt8C": (0x00, 0x31DD),
+        }
+    }
+
+    def __init__(self, rom, info: Optional[Dict[str, Any]] = None):
+        super().__init__(rom, info or dict(self.DEFAULT_INFO))
 
 
 class RoomsIndoorA(RoomsTable):
     # TODO: The color dungeon tables are in the same bank, but the pointer table is after the room data.
-    def __init__(self, rom):
-        super().__init__(rom, {
-            "count": 0x100,
-            "pointers_addr": 0x000,
-            "pointers_bank": 0x0A,
-            "data_bank": 0x0A,
-            "alt_pointers": {
-                "Alt1F5": (0x00, 0x31A1),
-            }
-        })
+    DEFAULT_INFO: Dict[str, Any] = {
+        "count": 0x100,
+        "pointers_addr": 0x000,
+        "pointers_bank": 0x0A,
+        "data_bank": 0x0A,
+        "alt_pointers": {
+            "Alt1F5": (0x00, 0x31A1),
+        }
+    }
+
+    def __init__(self, rom, info: Optional[Dict[str, Any]] = None):
+        super().__init__(rom, info or dict(self.DEFAULT_INFO))
 
 
 class RoomsIndoorB(RoomsTable):
     # Most likely, this table can be expanded all the way to the end of the bank,
     # giving a few 100 extra bytes to work with.
-    def __init__(self, rom):
-        super().__init__(rom, {
-            "count": 0x0FF,
-            "pointers_addr": 0x000,
-            "pointers_bank": 0x0B,
-            "data_bank": 0x0B,
-        })
+    DEFAULT_INFO: Dict[str, Any] = {
+        "count": 0x0FF,
+        "pointers_addr": 0x000,
+        "pointers_bank": 0x0B,
+        "data_bank": 0x0B,
+    }
+
+    def __init__(self, rom, info: Optional[Dict[str, Any]] = None):
+        super().__init__(rom, info or dict(self.DEFAULT_INFO))
 
 
 class RoomsColorDungeon(RoomsTable):
-    def __init__(self, rom):
-        super().__init__(rom, {
-            "count": 0x016,
-            "pointers_addr": 0x3B77,
-            "pointers_bank": 0x0A,
-            "data_bank": 0x0A,
-            "expand_to_end_of_bank": True
-        })
+    DEFAULT_INFO: Dict[str, Any] = {
+        "count": 0x016,
+        "pointers_addr": 0x3B77,
+        "pointers_bank": 0x0A,
+        "data_bank": 0x0A,
+        "expand_to_end_of_bank": True
+    }
+
+    def __init__(self, rom, info: Optional[Dict[str, Any]] = None):
+        super().__init__(rom, info or dict(self.DEFAULT_INFO))
 
 
 class BackgroundTable(PointerTable):
@@ -132,72 +149,81 @@ class BackgroundTable(PointerTable):
 
 
 class BackgroundTilesTable(BackgroundTable):
-    def __init__(self, rom):
-        super().__init__(rom, {
-            "count": 0x26,
-            "pointers_addr": 0x052B,
-            "pointers_bank": 0x20,
-            "data_bank": 0x08,
-            "expand_to_end_of_bank": True
-        })
+    DEFAULT_INFO: Dict[str, Any] = {
+        "count": 0x26,
+        "pointers_addr": 0x052B,
+        "pointers_bank": 0x20,
+        "data_bank": 0x08,
+        "expand_to_end_of_bank": True
+    }
+
+    def __init__(self, rom, info: Optional[Dict[str, Any]] = None):
+        super().__init__(rom, info or dict(self.DEFAULT_INFO))
 
 
 class BackgroundAttributeTable(BackgroundTable):
-    def __init__(self, rom):
-        super().__init__(rom, {
-            "count": 0x26,
-            "pointers_addr": 0x1C4B,
-            "pointers_bank": 0x24,
-            "data_bank": 0x24,
-            "expand_to_end_of_bank": True
-        })
+    DEFAULT_INFO: Dict[str, Any] = {
+        "count": 0x26,
+        "pointers_addr": 0x1C4B,
+        "pointers_bank": 0x24,
+        "data_bank": 0x24,
+        "expand_to_end_of_bank": True
+    }
+
+    def __init__(self, rom, info: Optional[Dict[str, Any]] = None):
+        super().__init__(rom, info or dict(self.DEFAULT_INFO))
 
 
 class OverworldRoomSpriteData(PointerTable):
-    def __init__(self, rom):
-        super().__init__(rom, {
-            "count": 0x100,
-            "pointers_addr": 0x30D3,
-            "pointers_bank": 0x20,
-            "data_bank": 0x20,
-            "data_addr": 0x33F3,
-            "data_size": 4,
-            "claim_storage_gaps": True,
-        })
+    DEFAULT_INFO: Dict[str, Any] = {
+        "count": 0x100,
+        "pointers_addr": 0x30D3,
+        "pointers_bank": 0x20,
+        "data_bank": 0x20,
+        "data_addr": 0x33F3,
+        "data_size": 4,
+        "claim_storage_gaps": True,
+    }
+
+    def __init__(self, rom, info: Optional[Dict[str, Any]] = None):
+        super().__init__(rom, info or dict(self.DEFAULT_INFO))
 
 
 class IndoorRoomSpriteData(PointerTable):
-    def __init__(self, rom):
-        super().__init__(rom, {
-            "count": 0x220,
-            "pointers_addr": 0x31D3,
-            "pointers_bank": 0x20,
-            "data_bank": 0x20,
-            "data_addr": 0x363B,
-            "data_size": 4,
-            "claim_storage_gaps": True,
-        })
+    DEFAULT_INFO: Dict[str, Any] = {
+        "count": 0x220,
+        "pointers_addr": 0x31D3,
+        "pointers_bank": 0x20,
+        "data_bank": 0x20,
+        "data_addr": 0x363B,
+        "data_size": 4,
+        "claim_storage_gaps": True,
+    }
+
+    def __init__(self, rom, info: Optional[Dict[str, Any]] = None):
+        super().__init__(rom, info or dict(self.DEFAULT_INFO))
 
 
 class ROMWithTables(ROM):
-    def __init__(self, filestream):
-        super().__init__(filestream)
+    def __init__(self, filestream, *, profile=None):
+        super().__init__(filestream, profile=profile)
+        p = self.profile
 
         # Ability to patch any text in the game with different text
-        self.texts = Texts(self)
+        self.texts = Texts(self, p.table_config("texts"))
         # Ability to modify rooms
-        self.entities = Entities(self)
-        self.rooms_overworld_top = RoomsOverworldTop(self)
-        self.rooms_overworld_bottom = RoomsOverworldBottom(self)
-        self.rooms_indoor_a = RoomsIndoorA(self)
-        self.rooms_indoor_b = RoomsIndoorB(self)
-        self.rooms_color_dungeon = RoomsColorDungeon(self)
-        self.room_sprite_data_overworld = OverworldRoomSpriteData(self)
-        self.room_sprite_data_indoor = IndoorRoomSpriteData(self)
+        self.entities = Entities(self, p.table_config("entities"))
+        self.rooms_overworld_top = RoomsOverworldTop(self, p.table_config("rooms_overworld_top"))
+        self.rooms_overworld_bottom = RoomsOverworldBottom(self, p.table_config("rooms_overworld_bottom"))
+        self.rooms_indoor_a = RoomsIndoorA(self, p.table_config("rooms_indoor_a"))
+        self.rooms_indoor_b = RoomsIndoorB(self, p.table_config("rooms_indoor_b"))
+        self.rooms_color_dungeon = RoomsColorDungeon(self, p.table_config("rooms_color_dungeon"))
+        self.room_sprite_data_overworld = OverworldRoomSpriteData(self, p.table_config("overworld_sprite_data"))
+        self.room_sprite_data_indoor = IndoorRoomSpriteData(self, p.table_config("indoor_sprite_data"))
 
         # Backgrounds for things like the title screen.
-        self.background_tiles = BackgroundTilesTable(self)
-        self.background_attributes = BackgroundAttributeTable(self)
+        self.background_tiles = BackgroundTilesTable(self, p.table_config("background_tiles"))
+        self.background_attributes = BackgroundAttributeTable(self, p.table_config("background_attributes"))
 
     def save(self, filename, *, name=None):
         self.texts.store(self)

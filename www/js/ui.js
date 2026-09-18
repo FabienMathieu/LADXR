@@ -288,7 +288,7 @@ function checkStoredRom()
             {
                 array[k] = bin.charCodeAt(k);
             }
-            if (getRomChecksum(array) == 89122269)
+            if (getRomChecksum(array) == 89122269 || getRomChecksum(array) == 89757956)
             {
                 romArray = array;
                 storedRomArray = array;
@@ -331,18 +331,16 @@ function updateForm()
             var a = new Uint8Array(buffer);
             var checksum = getRomChecksum(a);
             console.log("Checksum: " + rom.files[0].name + ": " + checksum);
-            if (checksum != 89122269)
+            if (checksum != 89122269 && checksum != 89757956)
             {
                 if (checksum == 89139089)
                     setValidRom(false, "Supplied English 1.1 instead of 1.0");
                 else if (checksum == 89653611)
                     setValidRom(false, "Supplied English 1.2 instead of 1.0");
-                else if (checksum == 89199617 || checksum == 89757956)
-                    setValidRom(false, "Supplied French instead of English version");
                 else if (checksum == 89992511 || checksum == 90082342)
-                    setValidRom(false, "Supplied German instead of English version");
+                    setValidRom(false, "Supplied German instead of English or French version");
                 else if (checksum == 87464316 || checksum == 87479931 || checksum == 87503721)
-                    setValidRom(false, "Supplied Japanese instead of English version");
+                    setValidRom(false, "Supplied Japanese instead of English or French version");
                 else
                     setValidRom(false, "Invalid ROM");
             }

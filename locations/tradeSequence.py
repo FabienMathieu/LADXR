@@ -33,22 +33,31 @@ class TradeSequenceItem(ItemInfo):
 
         if option == self.__default_item:
             return
+        fr = utils.getLanguage() == "fr"
         if self.__default_item == TRADING_ITEM_DOG_FOOD:
-            rom.texts[0x181] = utils.formatText("Make-up! Jewels! Dresses! I want it all! Sigh... And some new accessories would be nice... Oh! That Ribbon! I need it! Will you trade for my {%s}?" % option, ask="Yes  No!")
+            text = "Maquillage! Bijoux! Robes! Je veux tout! Soupir... Et de nouveaux accessoires seraient les bienvenus... Oh! Ce Ruban! Il me le faut! Tu l'échangerais contre mon {%s}?" if fr else "Make-up! Jewels! Dresses! I want it all! Sigh... And some new accessories would be nice... Oh! That Ribbon! I need it! Will you trade for my {%s}?"
+            rom.texts[0x181] = utils.formatText(text % option, ask="Yes  No!")
             rom.texts[0x182] = b'\xff'
-            rom.texts[0x183] = utils.formatText("Lucky! Thanks! Well, here's your {%s}!" % option)
+            text = "Quelle chance! Merci! Tiens, voici ton {%s}!" if fr else "Lucky! Thanks! Well, here's your {%s}!"
+            rom.texts[0x183] = utils.formatText(text % option)
         elif self.__default_item == TRADING_ITEM_BANANAS:
-            rom.texts[0x1CA] = utils.formatText("MUNCH MUNCH!! ... ... ... ... That was great! I know it's not a fair trade, but here's some {%s}! YUM..." % option)
+            text = "MUNCH MUNCH!! ... ... ... ... C'était délicieux! Je sais que ce n'est pas un échange équitable, mais voici quelques {%s}! Miam..." if fr else "MUNCH MUNCH!! ... ... ... ... That was great! I know it's not a fair trade, but here's some {%s}! YUM..."
+            rom.texts[0x1CA] = utils.formatText(text % option)
         elif self.__default_item == TRADING_ITEM_PINEAPPLE:
-            rom.texts[0x1CF] = utils.formatText("Hi ho! Hey you! Is that possibly a <honeycomb> you have? I just ran out! Will you swap it for a {%s}?" % option, ask="Yes  No")
+            text = "Salut! Hé, toi! Ce ne serait pas un <honeycomb> que tu as? J'en ai plus! Tu l'échangerais contre un {%s}?" if fr else "Hi ho! Hey you! Is that possibly a <honeycomb> you have? I just ran out! Will you swap it for a {%s}?"
+            rom.texts[0x1CF] = utils.formatText(text % option, ask="Yes  No")
         elif self.__default_item == TRADING_ITEM_HIBISCUS:
-            rom.texts[0x173] = utils.formatText("AH! This isn't meant to be a reward... Here, take this {%s}!" % option)
+            text = "AH! Ce n'est pas censé être une récompense... Tiens, prends ce {%s}!" if fr else "AH! This isn't meant to be a reward... Here, take this {%s}!"
+            rom.texts[0x173] = utils.formatText(text % option)
         elif self.__default_item == TRADING_ITEM_LETTER:
-            rom.texts[0x168] = utils.formatText("I would like you to take this {%s}, please!" % option)
+            text = "Je voudrais que tu prennes ce {%s}, s'il te plaît!" if fr else "I would like you to take this {%s}, please!"
+            rom.texts[0x168] = utils.formatText(text % option)
         elif self.__default_item == TRADING_ITEM_BROOM:
-            rom.texts[0x135] = utils.formatText("Mmm... She's so beautiful... I must give you something for your trouble... Hmm...  Well, it looks like all I have is this {%s}... how'll that be?" % option, ask="Fine No...")
+            text = "Mmm... Elle est si belle... Je dois te donner quelque chose pour ta peine... Hmm... Il semble que je n'aie que ce {%s}... ça te va?" if fr else "Mmm... She's so beautiful... I must give you something for your trouble... Hmm...  Well, it looks like all I have is this {%s}... how'll that be?"
+            rom.texts[0x135] = utils.formatText(text % option, ask="Fine No...")
         elif self.__default_item == TRADING_ITEM_FISHING_HOOK:
-            rom.texts[0x15D] = utils.formatText("Okay! In return you can have this {%s} I found when I swept by the river bank!" % option)
+            text = "D'accord! En échange, tu peux prendre ce {%s} que j'ai trouvé en balayant la rive!" if fr else "Okay! In return you can have this {%s} I found when I swept by the river bank!"
+            rom.texts[0x15D] = utils.formatText(text % option)
 
     def read(self, rom):
         assert self._location is not None, hex(self.room)

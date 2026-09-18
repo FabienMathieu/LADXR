@@ -19,6 +19,21 @@ import time
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 SERVE_DIR = os.path.join(BASE_DIR, 'www')
 
+# Directories that are not needed by the in-browser Python runtime and must not
+# be bundled (this also avoids shipping ROM files in the distribution).
+_TAR_EXCLUDE_TOP = {'.git', '.github', 'disassembly', 'tools', '__pycache__', 'www'}
+_TAR_EXCLUDE_EXT = ('.gbc', '.gb', '.sav', '.sym', '.map', '.o')
+
+
+def _tar_filter(tarinfo):
+    name = tarinfo.name[2:] if tarinfo.name.startswith("./") else tarinfo.name
+    top = name.split("/", 1)[0]
+    if top in _TAR_EXCLUDE_TOP:
+        return None
+    if name.endswith(_TAR_EXCLUDE_EXT):
+        return None
+    return tarinfo
+
 
 parser = argparse.ArgumentParser(
     prog='LADXR Web Launcher',
@@ -64,7 +79,7 @@ class LADXRHandler(http.server.SimpleHTTPRequestHandler):
                 src = BASE_DIR
                 dest = os.path.join(dirname, 'ladxr.tar.gz')
                 with tarfile.open(dest, 'w:gz') as tar:
-                    tar.add(src, arcname='')
+                    tar.add(src, arcname='', filter=_tar_filter)
 
                 self.send_file_response(dest)
                 return
